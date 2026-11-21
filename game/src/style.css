@@ -1,0 +1,144 @@
+/* Solara Bay HUD: dense, dark-glass panels with amber/teal accents, sized to
+   stay legible at 1280x720 and when shrunk into the judge contact sheet. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 100%; height: 100%; overflow: hidden; background: #141c33;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; color: #fff; }
+#game-canvas, #game-canvas canvas { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+#vignette { position: fixed; inset: 0; pointer-events: none; z-index: 2;
+  background: radial-gradient(ellipse at center, transparent 68%, rgba(0,0,0,0.16) 100%); }
+#hud { position: fixed; inset: 0; z-index: 3; pointer-events: none; font-size: 13px; display: none; }
+.panel { background: rgba(12, 18, 30, 0.82); border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 8px; padding: 8px 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.35); }
+
+/* Mission card, top-left */
+#mission-card { position: absolute; top: 12px; left: 12px; width: 330px;
+  border-top: 4px solid #ffc94a; }
+#mission-chapter { color: #ffc94a; font-weight: 800; font-size: 11px; letter-spacing: 1px; }
+#mission-stage { display: inline-block; background: #ffc94a; color: #1a1a1a; font-weight: 800;
+  font-size: 11px; padding: 1px 6px; border-radius: 3px; margin: 3px 0; }
+#mission-title { font-size: 21px; font-weight: 900; letter-spacing: 0.5px; line-height: 1.1; }
+#mission-bar-wrap { height: 6px; background: rgba(255,255,255,0.18); border-radius: 3px; margin: 6px 0 4px; overflow: hidden; }
+#mission-bar { height: 100%; width: 50%; background: linear-gradient(90deg, #7dff9a, #ffc94a); }
+#mission-objective { font-size: 13px; color: #e8e8e8; }
+#mission-next { font-size: 12px; color: #7dd8c9; margin-top: 2px; }
+
+/* Police panel */
+#police-panel { position: absolute; top: 168px; left: 12px; width: 330px; }
+.panel-head { display: flex; justify-content: space-between; color: #ff8a8a;
+  font-weight: 800; font-size: 12px; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.15);
+  padding-bottom: 4px; margin-bottom: 4px; }
+.police-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 12.5px; }
+.pname { font-weight: 800; width: 92px; }
+.prole { flex: 1; text-align: center; font-weight: 700; font-size: 11px; padding: 1px 4px; border-radius: 3px; }
+.role-ram { background: #ff4a4a; color: #fff; }
+.role-pursuit { background: #f5a742; color: #1a1a1a; }
+.role-flank { background: #3a9ad9; color: #fff; }
+.pdist { width: 52px; text-align: right; font-weight: 800; color: #ffd98a; }
+#police-note { margin-top: 5px; font-size: 11px; color: #ff9a9a; font-weight: 700; letter-spacing: 0.5px; }
+
+/* Top-right: cash, stars, rank */
+#top-right { position: absolute; top: 12px; right: 14px; text-align: right; }
+#clock { font-size: 13px; font-weight: 700; color: #e8e8e8; }
+#cash { font-size: 34px; font-weight: 900; color: #7dffc9; text-shadow: 0 2px 6px rgba(0,0,0,0.6); line-height: 1; }
+#stars { font-size: 24px; letter-spacing: 3px; color: #555; text-shadow: 0 1px 4px rgba(0,0,0,0.6); }
+#stars.hot { color: #ffc94a; }
+#rank-row { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; font-weight: 800; }
+#rank-name { color: #ffc94a; }
+#rank-bar-wrap { height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; margin-top: 3px; overflow: hidden; }
+#rank-bar { height: 100%; width: 40%; background: #7dd8c9; }
+
+/* Right rail: weapons + crew */
+#right-rail { position: absolute; top: 150px; right: 14px; width: 208px; display: flex; flex-direction: column; gap: 8px; }
+#weapons { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.wslot { background: rgba(12,18,30,0.82); border: 1px solid rgba(255,255,255,0.14); border-radius: 6px;
+  padding: 5px 6px; display: grid; grid-template-columns: 14px 1fr; gap: 2px 4px; }
+.wslot.active { border-color: #ffc94a; box-shadow: 0 0 0 1px #ffc94a; }
+.wkey { font-size: 10px; color: #aaa; }
+.wicon { font-size: 15px; text-align: right; }
+.wname { font-size: 11px; font-weight: 800; grid-column: 1 / 3; }
+.wammo { font-size: 11px; color: #ffd98a; font-weight: 800; grid-column: 1 / 3; text-align: right; }
+.crew-card { display: flex; align-items: center; gap: 8px; background: rgba(12,18,30,0.82);
+  border: 1px solid rgba(255,255,255,0.14); border-left: 4px solid #3a9ad9; border-radius: 6px; padding: 5px 7px; }
+.crew-card.cooling { opacity: 0.65; }
+.crew-portrait { flex: 0 0 44px; }
+.crew-portrait svg { display: block; border-radius: 6px; }
+.crew-info { flex: 1; display: flex; flex-direction: column; }
+.crew-info b { font-size: 12px; letter-spacing: 0.5px; }
+.crew-info i { font-size: 11px; color: #bcd8e8; font-style: normal; }
+.crew-key { font-weight: 900; font-size: 15px; color: #ffc94a; border: 1px solid #ffc94a; border-radius: 4px; padding: 2px 6px; }
+
+/* Bottom-left: district, minimap, vitals */
+#bottom-left { position: absolute; left: 12px; bottom: 12px; display: flex; flex-direction: column; gap: 8px; }
+#district-card { width: 250px; }
+#district-name { font-size: 19px; font-weight: 900; color: #ffd98a; }
+#district-road { font-size: 12px; color: #d8d8d8; }
+#district-grip { font-size: 11px; font-weight: 800; color: #7dff9a; margin-top: 2px; }
+#district-meter-wrap { height: 5px; background: rgba(255,255,255,0.18); border-radius: 3px; margin-top: 3px; overflow: hidden; }
+#district-meter { height: 100%; background: #7dff9a; }
+#minimap { width: 180px; height: 180px; border: 2px solid rgba(255,255,255,0.35); border-radius: 8px;
+  background: #1a2a3a; box-shadow: 0 2px 10px rgba(0,0,0,0.4); }
+#vitals { width: 250px; display: flex; flex-direction: column; gap: 4px; }
+.vital { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; }
+.vital span { width: 52px; }
+.vital-bar { flex: 1; height: 8px; background: rgba(255,255,255,0.18); border-radius: 4px; overflow: hidden; }
+#health-bar { height: 100%; background: #7dff9a; width: 72%; }
+#armour-bar { height: 100%; background: #5aa8ff; width: 55%; }
+.vital b { width: 26px; text-align: right; }
+
+/* Dialogue, bottom-centre */
+#dialogue { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  display: flex; gap: 10px; align-items: center; width: 520px; border-left: 4px solid #ffc94a; }
+#dialogue-portrait { flex: 0 0 44px; }
+#dialogue-portrait svg { display: block; border-radius: 6px; }
+.dialogue-body { display: flex; flex-direction: column; gap: 2px; }
+.dialogue-head b { color: #7dd8c9; font-size: 13px; margin-right: 8px; }
+.dialogue-head i { color: #aaa; font-size: 11px; font-style: normal; }
+#dialogue-text { font-size: 14px; line-height: 1.3; }
+
+/* Bottom-right: speed, vehicle, radio */
+#bottom-right { position: absolute; right: 14px; bottom: 12px; text-align: right; }
+#speed-block { font-size: 52px; font-weight: 900; line-height: 0.95; text-shadow: 0 2px 8px rgba(0,0,0,0.7); }
+#speed-block .unit { font-size: 15px; color: #ffd98a; margin-left: 4px; }
+#vehicle-name { font-size: 17px; font-weight: 900; color: #7dd8c9; }
+#vehicle-tune { font-size: 12px; color: #e8e8e8; font-weight: 700; }
+#damage-wrap { display: flex; align-items: center; justify-content: flex-end; gap: 6px; margin-top: 4px; font-size: 11px; font-weight: 800; }
+#damage-bar-wrap { width: 130px; height: 7px; background: rgba(255,255,255,0.2); border-radius: 4px; overflow: hidden; }
+#damage-bar { height: 100%; background: #ffc94a; width: 62%; }
+#radio { margin-top: 6px; font-size: 12.5px; color: #ffd98a; font-weight: 700;
+  background: rgba(12,18,30,0.75); padding: 3px 8px; border-radius: 5px; display: inline-block; }
+
+#crosshair { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  font-size: 22px; font-weight: 900; color: rgba(255,255,255,0.85); text-shadow: 0 0 4px #000; }
+#hint { position: absolute; left: 50%; bottom: 0; transform: translateX(-50%); font-size: 11px;
+  color: rgba(255,255,255,0.75); background: rgba(0,0,0,0.45); padding: 2px 10px; border-radius: 4px 4px 0 0; white-space: nowrap; }
+
+/* Menu + pause */
+#menu, #pause { position: fixed; inset: 0; z-index: 10; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, rgba(10,14,28,0.88), rgba(40,20,40,0.88)); }
+#pause { display: none; background: rgba(10,14,28,0.9); }
+.menu-inner, .pause-inner { width: 640px; max-width: 92vw; max-height: 92vh; overflow-y: auto; text-align: center; }
+.menu-kicker { color: #ffc94a; letter-spacing: 4px; font-size: 12px; font-weight: 800; }
+#menu h1 { font-size: 64px; letter-spacing: 10px; font-weight: 900; margin: 6px 0; }
+.menu-sub { color: #d8d8e8; font-size: 15px; line-height: 1.4; margin-bottom: 16px; }
+.menu-buttons { display: flex; gap: 10px; justify-content: center; margin: 12px 0; }
+button { pointer-events: auto; cursor: pointer; background: #ff7a3c; color: #fff; border: none;
+  font-weight: 900; font-size: 15px; letter-spacing: 1px; padding: 10px 22px; border-radius: 6px; }
+button:hover { background: #ff8f5a; }
+#btn-continue { background: #3a9ad9; }
+.menu-missions h2, #pause h2 { font-size: 15px; letter-spacing: 2px; color: #ffc94a; margin: 10px 0 6px; }
+#mission-list, #pause-missions { display: flex; flex-direction: column; gap: 5px; text-align: left; }
+.mission-btn { background: rgba(255,255,255,0.08); color: #fff; display: flex; justify-content: space-between;
+  gap: 10px; padding: 7px 10px; font-size: 13px; font-weight: 400; text-transform: none; letter-spacing: 0; }
+.mission-btn b { font-size: 13px; }
+.mission-btn span { color: #bcd8e8; font-size: 12px; }
+.mission-btn.done { border-left: 4px solid #7dff9a; }
+.mission-btn.active { border-left: 4px solid #ffc94a; background: rgba(255,201,74,0.15); }
+.menu-controls { color: #aaa; font-size: 12px; margin-top: 14px; line-height: 1.5; }
+#error { position: fixed; left: 12px; top: 50%; z-index: 50; display: none; background: #a00; color: #fff;
+  padding: 10px; border-radius: 6px; max-width: 500px; font-size: 13px; }
+
+@media (max-width: 900px) {
+  #mission-card, #police-panel { width: 250px; }
+  #dialogue { width: 380px; }
+  #right-rail { width: 170px; }
+}

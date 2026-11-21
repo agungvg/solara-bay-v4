@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solara Bay — an open-world crime game</title>
+<link rel="stylesheet" href="src/style.css">
+<script type="importmap">
+{ "imports": { "three": "./vendor/three.module.min.js" } }
+</script>
+</head>
+<body>
+<div id="game-canvas"></div>
+<div id="vignette"></div>
+
+<!-- ============ DENSE HUD ============ -->
+<div id="hud">
+  <!-- Mission card, top-left -->
+  <div id="mission-card" class="panel">
+    <div id="mission-chapter">CH.3 · HIGH WATER</div>
+    <div id="mission-stage">STAGE 3/4</div>
+    <div id="mission-title">WRECK THE REGENT</div>
+    <div id="mission-bar-wrap"><div id="mission-bar"></div></div>
+    <div id="mission-objective">Wreck the Regent before it reaches the pier</div>
+    <div id="mission-next">NEXT&nbsp; Vanish</div>
+  </div>
+
+  <!-- Police response panel, left under the mission card -->
+  <div id="police-panel" class="panel">
+    <div class="panel-head"><span>SBP RESPONSE</span><span id="police-count">6 UNITS</span></div>
+    <div id="police-list"></div>
+    <div id="police-note">AIR UNIT DEPLOYED · OSPREY-1 OVERHEAD</div>
+  </div>
+
+  <!-- Cash / wanted / clock / rank, top-right -->
+  <div id="top-right">
+    <div id="clock">16:00</div>
+    <div id="cash">$18,450</div>
+    <div id="stars" class="stars hot">★★★★☆</div>
+    <div id="rank-row"><span id="rank-name">FIXER</span><span id="rank-text">3,900 / 5,200 XP</span></div>
+    <div id="rank-bar-wrap"><div id="rank-bar"></div></div>
+  </div>
+
+  <!-- Weapon slots + crew cards, right -->
+  <div id="right-rail">
+    <div id="weapons"></div>
+    <div id="crew"></div>
+  </div>
+
+  <!-- District + minimap + health, bottom-left -->
+  <div id="bottom-left">
+    <div id="district-card" class="panel">
+      <div id="district-name">KUMALA STRAND</div>
+      <div id="district-road">Strand Boulevard · Beachfront strip</div>
+      <div id="district-grip">GRIP 58%</div>
+      <div id="district-meter-wrap"><div id="district-meter"></div></div>
+    </div>
+    <canvas id="minimap" width="180" height="180"></canvas>
+    <div id="vitals" class="panel">
+      <div class="vital"><span>HEALTH</span><div class="vital-bar"><div id="health-bar"></div></div><b id="health-text">72</b></div>
+      <div class="vital"><span>ARMOUR</span><div class="vital-bar"><div id="armour-bar"></div></div><b id="armour-text">55</b></div>
+    </div>
+  </div>
+
+  <!-- Dialogue, bottom-centre -->
+  <div id="dialogue" class="panel">
+    <span id="dialogue-portrait"></span>
+    <span class="dialogue-body">
+      <span class="dialogue-head"><b id="dialogue-speaker">MIRA KESANG</b><i id="dialogue-role">Crew · Driver</i></span>
+      <span id="dialogue-text">He's making for Kumala Pier! Ram the Regent before it reaches the water!</span>
+    </span>
+  </div>
+
+  <!-- Speed + vehicle + radio, bottom-right -->
+  <div id="bottom-right">
+    <div id="speed-block"><span id="speed">111</span><span class="unit">KM/H</span></div>
+    <div id="vehicle-name">RUKAN PELO GT</div>
+    <div id="vehicle-tune">TUNE 3 · SPORTS</div>
+    <div id="damage-wrap"><span>CONDITION</span><div id="damage-bar-wrap"><div id="damage-bar"></div></div><b id="damage-text">62% DENTED</b></div>
+    <div id="radio">♪ RADIO OMBO 98.4 — Tide Runner — Sol Mara</div>
+  </div>
+
+  <div id="crosshair">+</div>
+  <div id="hint">WASD drive · E exit car · F shoot · Z/X/C crew · M missions · Esc pause</div>
+</div>
+
+<!-- ============ MENU ============ -->
+<div id="menu">
+  <div class="menu-inner">
+    <div class="menu-kicker">A SOLARA BAY STORY</div>
+    <h1>SOLARA BAY</h1>
+    <p class="menu-sub">Take on the Vipers, outrun the patrols, and own the bay — eight
+    missions from your first stolen wheels to the sunset chase. Built from
+    scratch: a living Strand, traffic, pedestrians, police and a radio that
+    never stops.</p>
+    <div class="menu-buttons">
+      <button id="btn-continue">CONTINUE</button>
+      <button id="btn-new">NEW GAME</button>
+    </div>
+    <div class="menu-missions">
+      <h2>STORY MISSIONS</h2>
+      <div id="mission-list"></div>
+    </div>
+    <p class="menu-controls">WASD move / drive · mouse drag to look · E enter or exit a car ·
+    F shoot · 1–4 weapons · Z / X / C crew abilities · R radio · M missions · Esc pause</p>
+  </div>
+</div>
+
+<!-- ============ PAUSE ============ -->
+<div id="pause">
+  <div class="pause-inner">
+    <h2>PAUSED — SOLARA BAY</h2>
+    <div id="pause-missions"></div>
+    <div class="menu-buttons">
+      <button id="btn-resume">RESUME</button>
+      <button id="btn-save">SAVE GAME</button>
+      <button id="btn-quit">SAVE &amp; RESTART</button>
+    </div>
+    <p class="menu-controls">Progress saves to this browser automatically. Pick a mission above to jump to it.</p>
+  </div>
+</div>
+
+<div id="error"></div>
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
